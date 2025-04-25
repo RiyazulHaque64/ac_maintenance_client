@@ -44,12 +44,11 @@ export const paths = {
   // DASHBOARD
   dashboard: {
     root: ROOTS.DASHBOARD,
-    two: `${ROOTS.DASHBOARD}/two`,
-    three: `${ROOTS.DASHBOARD}/three`,
-    group: {
-      root: `${ROOTS.DASHBOARD}/group`,
-      five: `${ROOTS.DASHBOARD}/group/five`,
-      six: `${ROOTS.DASHBOARD}/group/six`,
-    },
+    blog: `${ROOTS.DASHBOARD}/blog`,
+    service: `${ROOTS.DASHBOARD}/service`,
+    gallery: `${ROOTS.DASHBOARD}/gallery`,
+    user: `${ROOTS.DASHBOARD}/user`,
+    update_profile: `${ROOTS.DASHBOARD}/update-profile`,
+    change_password: `${ROOTS.DASHBOARD}/change-password`,
   },
 };
