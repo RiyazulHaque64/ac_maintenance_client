@@ -1,81 +1,36 @@
 'use client';
 
-import { useMemo, useEffect, useCallback } from 'react';
+import type { IUser } from 'src/types/user';
 
-import { useSetState } from 'src/hooks/use-set-state';
+import { useMemo, useState, useEffect } from 'react';
 
-import axios, { endpoints } from 'src/utils/axios';
-
-import { STORAGE_KEY } from './constant';
 import { AuthContext } from '../auth-context';
-import { setSession, isValidToken } from './utils';
-
-import type { AuthState } from '../../types';
 
 // ----------------------------------------------------------------------
-
-/**
- * NOTE:
- * We only build demo at basic level.
- * Customer will need to do some extra handling yourself if you want to extend the logic and other features...
- */
 
 type Props = {
   children: React.ReactNode;
 };
 
 export function AuthProvider({ children }: Props) {
-  const { state, setState } = useSetState<AuthState>({
-    user: null,
-    loading: true,
-  });
-
-  const checkUserSession = useCallback(async () => {
-    try {
-      const accessToken = sessionStorage.getItem(STORAGE_KEY);
-
-      if (accessToken && isValidToken(accessToken)) {
-        setSession(accessToken);
-
-        const res = await axios.get(endpoints.auth.me);
-
-        const { user } = res.data;
-
-        setState({ user: { ...user, accessToken }, loading: false });
-      } else {
-        setState({ user: null, loading: false });
-      }
-    } catch (error) {
-      console.error(error);
-      setState({ user: null, loading: false });
-    }
-  }, [setState]);
+  const [user, setUser] = useState<IUser | null>(null);
 
   useEffect(() => {
-    checkUserSession();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const userInfo = localStorage.getItem('user');
+    if (userInfo) {
+      setUser(JSON.parse(userInfo));
+    }
   }, []);
 
-  // ----------------------------------------------------------------------
-
-  const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated';
-
-  const status = state.loading ? 'loading' : checkAuthenticated;
-
+  const status = 'sdauthenticated';
   const memoizedValue = useMemo(
     () => ({
-      user: state.user
-        ? {
-            ...state.user,
-            role: state.user?.role ?? 'admin',
-          }
-        : null,
-      checkUserSession,
-      loading: status === 'loading',
-      authenticated: status === 'authenticated',
-      unauthenticated: status === 'unauthenticated',
+      user,
+      loading: false,
+      authenticated: false,
+      unauthenticated: false,
     }),
-    [checkUserSession, state.user, status]
+    [user]
   );
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;

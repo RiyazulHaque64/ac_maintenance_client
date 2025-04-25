@@ -6,14 +6,14 @@ import { CONFIG } from 'src/config-global';
 
 // ----------------------------------------------------------------------
 
-const axiosInstance = axios.create({ baseURL: CONFIG.serverUrl });
+const api = axios.create({ baseURL: CONFIG.serverUrl, withCredentials: true });
 
-axiosInstance.interceptors.response.use(
+api.interceptors.response.use(
   (response) => response,
   (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong!')
 );
 
-export default axiosInstance;
+export default api;
 
 // ----------------------------------------------------------------------
 
@@ -21,7 +21,7 @@ export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
   try {
     const [url, config] = Array.isArray(args) ? args : [args];
 
-    const res = await axiosInstance.get(url, { ...config });
+    const res = await api.get(url, { ...config });
 
     return res.data;
   } catch (error) {

@@ -1,4 +1,5 @@
-import { CONFIG } from 'src/config-global';
+import { cookies } from 'next/headers';
+
 import { DashboardLayout } from 'src/layouts/dashboard';
 
 import { AuthGuard } from 'src/auth/guard';
@@ -10,12 +11,10 @@ type Props = {
 };
 
 export default function Layout({ children }: Props) {
-  if (CONFIG.auth.skip) {
-    return <DashboardLayout>{children}</DashboardLayout>;
-  }
+  const token = cookies().get('token')?.value;
 
   return (
-    <AuthGuard>
+    <AuthGuard token={token}>
       <DashboardLayout>{children}</DashboardLayout>
     </AuthGuard>
   );
