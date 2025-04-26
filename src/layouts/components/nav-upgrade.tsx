@@ -29,7 +29,11 @@ export function NavUpgrade({ sx, ...other }: StackProps) {
   return (
     <Stack sx={{ px: 2, py: 5, textAlign: 'center', ...sx }} {...other}>
       <Stack alignItems="center">
-        <Avatar src={user?.profile_pic} alt={user?.name} sx={{ width: 48, height: 48 }}>
+        <Avatar
+          src={user?.profile_pic ? `${CONFIG.supabase.url}${user?.profile_pic}` : ''}
+          alt={user?.name}
+          sx={{ width: 48, height: 48 }}
+        >
           {user?.name?.charAt(0).toUpperCase()}
         </Avatar>
 

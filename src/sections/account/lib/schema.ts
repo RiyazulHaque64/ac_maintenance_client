@@ -25,3 +25,10 @@ export const ChangePasswordSchema = zod
       });
     }
   });
+
+export const UpdateProfileSchema = zod.object({
+  profile_pic: zod.any(),
+  name: zod.string().min(1, { message: 'Name is required!' }),
+  email: zod.string().email({ message: 'Email must be a valid email address!' }),
+  contact_number: zod.string().optional(),
+});

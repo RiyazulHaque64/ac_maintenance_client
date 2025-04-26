@@ -16,6 +16,7 @@ import IconButton from '@mui/material/IconButton';
 import { paths } from 'src/routes/paths';
 import { useRouter, usePathname } from 'src/routes/hooks';
 
+import { CONFIG } from 'src/config-global';
 import { varAlpha } from 'src/theme/styles';
 
 import { Label } from 'src/components/label';
@@ -74,7 +75,10 @@ export function AccountDrawer({ data = [], sx, ...other }: AccountDrawerProps) {
     <AnimateAvatar
       width={96}
       slotProps={{
-        avatar: { src: user?.profile_pic, alt: user?.name },
+        avatar: {
+          src: user?.profile_pic ? `${CONFIG.supabase.url}${user?.profile_pic}` : '',
+          alt: user?.name,
+        },
         overlay: {
           border: 2,
           spacing: 3,
@@ -90,7 +94,7 @@ export function AccountDrawer({ data = [], sx, ...other }: AccountDrawerProps) {
     <>
       <AccountButton
         onClick={handleOpenDrawer}
-        photoURL={user?.profile_pic || ''}
+        photoURL={user?.profile_pic ? `${CONFIG.supabase.url}${user?.profile_pic}` : ''}
         displayName={user?.name || ''}
         sx={sx}
         {...other}

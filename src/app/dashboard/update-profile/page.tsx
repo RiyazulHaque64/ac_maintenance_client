@@ -1,11 +1,11 @@
 import { CONFIG } from 'src/config-global';
 
-import { BlankView } from 'src/sections/blank/view';
+import { UpdateProfileView } from 'src/sections/account/update-profile-view';
 
 // ----------------------------------------------------------------------
 
 export const metadata = { title: `Update profile - ${CONFIG.appName}` };
 
 export default function Page() {
-  return <BlankView title="Update profile" />;
+  return <UpdateProfileView />;
 }

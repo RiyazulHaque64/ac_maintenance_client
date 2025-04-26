@@ -5,5 +5,4 @@ export interface IUser {
   contact_number: string;
   profile_pic: string;
   role: 'SUPER_ADMIN' | 'ADMIN' | 'USER';
-  token: string;
 }

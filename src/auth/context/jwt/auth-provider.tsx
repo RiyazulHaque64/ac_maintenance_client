@@ -22,7 +22,6 @@ export function AuthProvider({ children }: Props) {
     }
   }, []);
 
-  const status = 'sdauthenticated';
   const memoizedValue = useMemo(
     () => ({
       user,
