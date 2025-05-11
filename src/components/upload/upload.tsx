@@ -30,6 +30,8 @@ export function Upload({
   onRemoveAll,
   className,
   multiple = false,
+  previewMultiFile = true,
+  showSubHeading = true,
   ...other
 }: UploadProps) {
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
@@ -48,7 +50,9 @@ export function Upload({
 
   const renderMultiPreview = hasFiles && (
     <>
-      <MultiFilePreview files={value} thumbnail={thumbnail} onRemove={onRemove} sx={{ my: 3 }} />
+      {previewMultiFile && (
+        <MultiFilePreview files={value} thumbnail={thumbnail} onRemove={onRemove} sx={{ my: 3 }} />
+      )}
 
       {(onRemoveAll || onUpload) && (
         <Box gap={1.5} display="flex" justifyContent="flex-end">
@@ -104,7 +108,11 @@ export function Upload({
         <input {...getInputProps()} />
 
         {/* Single file */}
-        {hasFile ? <SingleFilePreview file={value as File} /> : <UploadPlaceholder />}
+        {hasFile ? (
+          <SingleFilePreview file={value as File} />
+        ) : (
+          <UploadPlaceholder showSubHeading={showSubHeading} />
+        )}
       </Box>
 
       {/* Single file */}
@@ -116,7 +124,7 @@ export function Upload({
         </FormHelperText>
       )}
 
-      <RejectionFiles files={fileRejections} />
+      <RejectionFiles files={[...fileRejections]} />
 
       {/* Multi files */}
       {renderMultiPreview}

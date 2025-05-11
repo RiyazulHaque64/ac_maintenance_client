@@ -62,7 +62,7 @@ export function AnimateAvatar({
       </Avatar>
 
       <Box
-        component={m.span}
+        component={m.span as any}
         animate={{ rotate: 360 }}
         transition={{
           duration: 8,
