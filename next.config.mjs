@@ -5,7 +5,7 @@
 const isStaticExport = 'false';
 
 const nextConfig = {
-  trailingSlash: true,
+  trailingSlash: false,
   env: {
     BUILD_STATIC_EXPORT: isStaticExport,
   },

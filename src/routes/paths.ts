@@ -45,6 +45,7 @@ export const paths = {
   dashboard: {
     root: ROOTS.DASHBOARD,
     blog: `${ROOTS.DASHBOARD}/blog`,
+    add_blog: `${ROOTS.DASHBOARD}/blog/new`,
     service: `${ROOTS.DASHBOARD}/service`,
     gallery: `${ROOTS.DASHBOARD}/gallery`,
     user: `${ROOTS.DASHBOARD}/user`,

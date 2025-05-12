@@ -61,7 +61,6 @@ export function ChangePasswordForm() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       setErrorMsg('');
-      console.log('submitted data: ', data);
       const res = await api.post('/auth/reset-password', {
         old_password: data.old_password,
         new_password: data.new_password,
