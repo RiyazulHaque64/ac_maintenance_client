@@ -55,8 +55,8 @@ export function FileThumbnail({
       component="span"
       className={fileThumbnailClasses.root.concat(className ? ` ${className}` : '')}
       sx={{
-        width: 36,
-        height: 36,
+        width: { xs: 20, sm: 36 },
+        height: { xs: 20, sm: 36 },
         flexShrink: 0,
         borderRadius: 1.25,
         alignItems: 'center',

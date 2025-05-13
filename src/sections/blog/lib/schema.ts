@@ -5,4 +5,5 @@ export const NewBlogSchema = zod.object({
   tags: zod.array(zod.string()),
   content: zod.string(),
   thumbnail: zod.string(),
+  images: zod.array(zod.string()),
 });

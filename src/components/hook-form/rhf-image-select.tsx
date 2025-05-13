@@ -9,7 +9,7 @@ import { CONFIG } from 'src/config-global';
 import { varAlpha } from 'src/theme/styles';
 
 import { Iconify } from '../iconify';
-import { ImageSelectModalByRHF } from '../modal/image-select-modal/image-select-modal';
+import { ImageSelectModalByRHF } from '../modal/image-select-modal/rhf-image-select-modal';
 import { ImageSelectPlaceholder } from '../modal/image-select-modal/components/placeholder';
 
 // ----------------------------------------------------------------------
@@ -48,7 +48,7 @@ export function RHFImageSelect({
               <>
                 <Typography>{multipleImageHeader}:</Typography>
                 <Grid container spacing={2} sx={{ mt: 1 }}>
-                  {field.value.map((image: string) => (
+                  {field?.value?.map((image: string) => (
                     <Grid item xs={12} sm={6} md={4} key={image}>
                       <Box sx={{ position: 'relative' }}>
                         <Box
@@ -95,6 +95,7 @@ export function RHFImageSelect({
                       sx={{
                         border: `2px dashed ${grey[400]}`,
                         height: 1,
+                        minHeight: 180,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -113,7 +114,6 @@ export function RHFImageSelect({
               </>
             ) : (
               <Box
-                // {...field}
                 onClick={openImageModal.onTrue}
                 sx={{
                   bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
@@ -129,11 +129,17 @@ export function RHFImageSelect({
                     }),
                 }}
               >
-                {field.value.length && !multiple ? (
+                {field?.value?.length && !multiple ? (
                   <Box
                     component="img"
-                    src={`${CONFIG.supabase.url}/${field.value[0]}`}
-                    sx={{ width: 1, height: 1, borderRadius: 1, objectFit: 'cover' }}
+                    src={`${CONFIG.supabase.url}/${field.value}`}
+                    sx={{
+                      width: 1,
+                      height: 1,
+                      maxHeight: 300,
+                      borderRadius: 1,
+                      objectFit: 'cover',
+                    }}
                   />
                 ) : (
                   <ImageSelectPlaceholder

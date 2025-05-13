@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
+import { useTheme, useMediaQuery } from '@mui/material';
 
 import { fData } from 'src/utils/format-number';
 
@@ -25,6 +26,10 @@ export function MultiFilePreview({
   className,
   ...other
 }: MultiFilePreviewProps) {
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+  console.log('screen size: ', isSmallScreen);
   const renderFirstNode = firstNode && (
     <Box
       component="li"
@@ -82,8 +87,7 @@ export function MultiFilePreview({
                 sx={{
                   width: 80,
                   height: 80,
-                  border: (theme) =>
-                    `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
+                  border: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
                 }}
                 slotProps={{ icon: { width: 36, height: 36 } }}
                 {...slotProps?.thumbnail}
@@ -104,16 +108,23 @@ export function MultiFilePreview({
               display: 'flex',
               borderRadius: 1,
               alignItems: 'center',
-              border: (theme) =>
-                `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
+              border: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
             }}
           >
             <FileThumbnail file={file} {...slotProps?.thumbnail} />
 
             <ListItemText
-              primary={name}
+              primary={isSmallScreen ? `${name?.slice(0, 30)}...` : name}
               secondary={fData(size)}
-              secondaryTypographyProps={{ component: 'span', typography: 'caption' }}
+              secondaryTypographyProps={{
+                component: 'span',
+                typography: 'caption',
+                fontSize: { xs: '0.6rem', md: '0.75rem' },
+              }}
+              primaryTypographyProps={{
+                fontWeight: 'medium',
+                fontSize: { xs: '0.7rem', md: '0.875rem' },
+              }}
             />
 
             {onRemove && (

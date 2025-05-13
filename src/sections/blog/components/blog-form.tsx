@@ -45,6 +45,7 @@ export default function BlogForm() {
     tags: [],
     content: '',
     thumbnail: '',
+    images: [],
   };
 
   const methods = useForm<TNewBlog>({
@@ -73,7 +74,7 @@ export default function BlogForm() {
     <Stack direction="column" alignItems="center">
       <Card
         sx={{
-          p: 6,
+          p: { xs: 2, sm: 3, md: 6 },
           width: {
             xs: '95%',
             sm: '75%',
@@ -108,6 +109,14 @@ export default function BlogForm() {
                 name="thumbnail"
                 modalTitle="Select thumbnail"
                 placeholderHeading="Select or upload thumbnail"
+              />
+              <Field.ImageSelect
+                name="images"
+                modalTitle="Select additional images"
+                placeholderHeading="Select or upload additional images"
+                placeholderSubHeading="Additional images are optional"
+                multipleImageHeader="Additional images"
+                multiple
               />
             </Stack>
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

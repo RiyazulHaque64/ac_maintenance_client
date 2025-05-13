@@ -68,8 +68,7 @@ export function ImageDetails({ currentSelected, onDelete, deleteLoading }: Props
           <Box component="span" sx={{ width: 80, color: 'text.secondary', mr: 2 }}>
             Uploaded by
           </Box>
-          {`${currentSelected.uploaded_by?.first_name} ${currentSelected.uploaded_by?.last_name}` ||
-            'Unknown'}
+          {currentSelected.uploaded_by?.name || 'Unknown'}
         </Stack>
         <Stack sx={{ mt: 1 }}>
           <Button
@@ -89,8 +88,13 @@ export function ImageDetails({ currentSelected, onDelete, deleteLoading }: Props
         slotProps={{ arrow: { placement: 'bottom-left' } }}
       >
         <Box sx={{ p: 2, maxWidth: 280 }}>
-          <Typography variant="subtitle1">{currentSelected.name}</Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary', mt: '4px' }}>
+          <Typography variant="subtitle1" sx={{ fontSize: '0.9rem' }}>
+            {currentSelected.name}
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{ color: 'text.secondary', mt: '4px', fontSize: '0.8rem' }}
+          >
             Are you sure want to delete this file?
           </Typography>
           <Stack direction="row" justifyContent="flex-end" gap={1} sx={{ mt: 2 }}>
