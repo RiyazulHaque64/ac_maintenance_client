@@ -1,6 +1,6 @@
 import { CONFIG } from 'src/config-global';
 
-import BlogView from 'src/sections/blog/blog-view';
+import BlogView from './view';
 
 // ----------------------------------------------------------------------
 

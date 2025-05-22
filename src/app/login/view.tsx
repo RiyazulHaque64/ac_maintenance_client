@@ -1,11 +1,9 @@
 'use client';
 
-import type { z } from 'zod';
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useSearchParams } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -18,17 +16,19 @@ import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import api from 'src/utils/axios';
+import api from 'src/api/axios';
+import endpoints from 'src/api/end-points';
 
 import { Iconify } from 'src/components/iconify';
 import { Form, Field } from 'src/components/hook-form';
 
-import { LoginSchema } from '../schema';
-import { FormHead } from '../components/form-head';
+import { FormHead } from 'src/auth/components/form-head';
+
+import { LoginSchema } from './lib/schema';
+
+import type { LoginSchemaType } from './lib/types';
 
 // ----------------------------------------------------------------------
-
-export type LoginSchemaType = z.infer<typeof LoginSchema>;
 
 function LoginView() {
   // ------------------------------ State -------------------------------
@@ -36,7 +36,6 @@ function LoginView() {
 
   // ------------------------------ Hooks -------------------------------
   const password = useBoolean();
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const callbackUrl = searchParams.get('return_to') || '/dashboard';
@@ -61,9 +60,9 @@ function LoginView() {
   const onSubmit = handleSubmit(async (data: LoginSchemaType) => {
     try {
       setErrorMsg('');
-      const res = await api.post('/auth/login', data);
+      const res = await api.post(endpoints.auth.login, data);
       localStorage.setItem('user', JSON.stringify(res.data.data));
-      router.push(callbackUrl);
+      window.location.replace(callbackUrl);
     } catch (err) {
       setErrorMsg(typeof err === 'string' ? err : err.message);
     }

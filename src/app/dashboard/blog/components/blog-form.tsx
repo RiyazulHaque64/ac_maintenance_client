@@ -1,9 +1,8 @@
 'use client';
 
-import type { z as zod } from 'zod';
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import Card from '@mui/material/Card';
@@ -11,14 +10,18 @@ import Stack from '@mui/material/Stack';
 import { Alert, Typography } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 
+import { paths } from 'src/routes/paths';
+
+import api from 'src/api/axios';
+import endpoints from 'src/api/end-points';
+
+import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
 import { AutoCompleteWithAdding } from 'src/components/hook-form/auto-complete-with-adding';
 
 import { NewBlogSchema } from '../lib/schema';
 
-// ----------------------------------------------------------------------
-
-export type TNewBlog = zod.infer<typeof NewBlogSchema>;
+import type { TNewBlog } from '../lib/types';
 
 // ----------------------------------------------------------------------
 
@@ -40,6 +43,8 @@ const TAG_OPTIONS = [
 export default function BlogForm() {
   const [errorMsg, setErrorMsg] = useState('');
 
+  const router = useRouter();
+
   const defaultValues = {
     title: '',
     tags: [],
@@ -57,6 +62,7 @@ export default function BlogForm() {
   const {
     handleSubmit,
     formState: { isSubmitting, errors },
+    reset,
   } = methods;
 
   console.log(errors);
@@ -64,7 +70,12 @@ export default function BlogForm() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       setErrorMsg('');
-      console.log('submitted data: ', data);
+      const res = await api.post(endpoints.blog.create, data);
+      if (res.status === 201) {
+        reset();
+        toast.success('Blog created successfully!');
+        router.push(paths.dashboard.blog);
+      }
     } catch (err) {
       setErrorMsg(typeof err === 'string' ? err : err.message);
     }

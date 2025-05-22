@@ -1,6 +1,6 @@
 import { CONFIG } from 'src/config-global';
 
-import LoginView from 'src/auth/view/log-in-view';
+import LoginView from './view';
 
 // ----------------------------------------------------------------------
 

@@ -6,7 +6,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import BlogForm from './components/blog-form';
+import BlogForm from '../components/blog-form';
 
 const NewBlogView = () => {
   console.log('blog view');

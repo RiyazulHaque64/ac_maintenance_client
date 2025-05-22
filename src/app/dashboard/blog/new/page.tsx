@@ -2,7 +2,7 @@ import React from 'react';
 
 import { CONFIG } from 'src/config-global';
 
-import NewBlogView from 'src/sections/blog/new-blog-view';
+import NewBlogView from './view';
 
 export const metadata = { title: `New blog - ${CONFIG.appName}` };
 

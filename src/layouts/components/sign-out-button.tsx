@@ -21,7 +21,6 @@ export function SignOutButton({ onClose, ...other }: Props) {
 
   const handleLogout = useCallback(async () => {
     try {
-      console.log('in the logout button');
       await api.post('/auth/logout');
       localStorage.removeItem('user');
       router.refresh();
