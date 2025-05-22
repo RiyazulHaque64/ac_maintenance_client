@@ -10,6 +10,7 @@ import { CONFIG } from 'src/config-global';
 import { primary } from 'src/theme/core/palette';
 import { schemeConfig } from 'src/theme/scheme-config';
 import { ThemeProvider } from 'src/theme/theme-provider';
+import { LocalizationProvider } from 'src/locales/localization-provider';
 
 import { Snackbar } from 'src/components/snackbar';
 import { ProgressBar } from 'src/components/progress-bar';
@@ -48,18 +49,20 @@ export default async function RootLayout({ children }: Props) {
           modeStorageKey={schemeConfig.modeStorageKey}
         />
 
-        <AuthProvider>
-          <SettingsProvider settings={defaultSettings}>
-            <ThemeProvider>
-              <MotionLazy>
-                <ProgressBar />
-                <SettingsDrawer />
-                <Snackbar />
-                {children}
-              </MotionLazy>
-            </ThemeProvider>
-          </SettingsProvider>
-        </AuthProvider>
+        <LocalizationProvider>
+          <AuthProvider>
+            <SettingsProvider settings={defaultSettings}>
+              <ThemeProvider>
+                <MotionLazy>
+                  <ProgressBar />
+                  <SettingsDrawer />
+                  <Snackbar />
+                  {children}
+                </MotionLazy>
+              </ThemeProvider>
+            </SettingsProvider>
+          </AuthProvider>
+        </LocalizationProvider>
       </body>
     </html>
   );

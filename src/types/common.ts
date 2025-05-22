@@ -22,3 +22,11 @@ export interface IErrorResponse {
   message: string;
   errorSources: { path: string; message: string }[];
 }
+
+export type TFilterOption = { value: string | number; label: string };
+
+export type TMeta = {
+  page: number;
+  limit: number;
+  total: number;
+};
