@@ -3,6 +3,8 @@
  * https://github.com/you-dont-need-x/you-dont-need-lodash
  */
 
+import type { TFilterObject } from 'src/types/common';
+
 // ----------------------------------------------------------------------
 
 export function flattenArray<T>(list: T[], key = 'children'): T[] {
@@ -128,3 +130,22 @@ export const merge = (target: any, ...sources: any[]): any => {
 
   return merge(target, ...sources);
 };
+
+// ---------------------- Format Query String ------------------------------
+export function formatQueryString(query: TFilterObject): string {
+  const params = new URLSearchParams();
+
+  Object.entries(query).forEach(([key, value]) => {
+    if (value === undefined || value === '') return;
+
+    if (typeof value === 'object' && value !== null && 'value' in value) {
+      if (value.value !== '') {
+        params.append(key, String(value.value));
+      }
+    } else {
+      params.append(key, String(value));
+    }
+  });
+
+  return params.toString();
+}

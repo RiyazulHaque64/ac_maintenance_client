@@ -6,7 +6,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import BlogForm from '../components/blog-form';
+import PostForm from '../components/post-form';
 
 const NewBlogView = () => {
   console.log('blog view');
@@ -21,7 +21,7 @@ const NewBlogView = () => {
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
-      <BlogForm />
+      <PostForm />
     </DashboardContent>
   );
 };

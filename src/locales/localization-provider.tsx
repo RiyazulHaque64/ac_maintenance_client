@@ -1,4 +1,4 @@
-/* eslint-disable perfectionist/sort-imports */
+'use client';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider as Provider } from '@mui/x-date-pickers/LocalizationProvider';

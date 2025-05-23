@@ -40,7 +40,7 @@ const TAG_OPTIONS = [
   },
 ];
 
-export default function BlogForm() {
+export default function PostForm() {
   const [errorMsg, setErrorMsg] = useState('');
 
   const router = useRouter();

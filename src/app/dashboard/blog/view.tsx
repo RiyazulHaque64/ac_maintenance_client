@@ -1,22 +1,73 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
-import { Tab, Tabs, Button } from '@mui/material';
+import { Button } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
-import { DashboardContent } from 'src/layouts/dashboard';
+import { formatQueryString } from 'src/utils/helper';
 
-import { Label } from 'src/components/label';
+import api from 'src/api/axios';
+import endpoints from 'src/api/end-points';
+import { DashboardContent } from 'src/layouts/dashboard';
+import { DEFAULT_LIMIT_OPTION } from 'src/constants/common';
+
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
+import { PostFiltersState } from './components/post-filter-state';
+import { PostFilterToolbar } from './components/post-filter-toolbar';
 import { PostListHorizontal } from './components/post-list-horinzontal';
 
+import type { TPostFilter } from './lib/types';
+
 const BlogView = () => {
-  const [activeTab, setActiveTab] = useState('all');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<{
+    success: boolean;
+    message: string;
+    meta: { page: number; limit: number; total: number };
+    data: [];
+  } | null>(null);
+  const [searchText, setSearchText] = useState('');
+  const [filter, setFilter] = useState<TPostFilter>({
+    page: 1,
+    limit: DEFAULT_LIMIT_OPTION,
+    filter_by: { label: 'All', value: '' },
+    from_date: '',
+    to_date: '',
+  });
+
+  // ------------------------------ Handler Functions ---------------------------
+  const canReset =
+    !!searchText || !!filter.filter_by.value || !!filter.from_date || !!filter.to_date;
+
+  const fetchPosts = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const queryString = formatQueryString(filter);
+
+      const response = await api.get(
+        `${endpoints.blog.getAll}${queryString ? `?${queryString}` : ''}`
+      );
+      if (response.status === 200) {
+        setData(response.data);
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to get posts');
+    } finally {
+      setLoading(false);
+    }
+  }, [filter]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
   return (
     <DashboardContent>
@@ -35,33 +86,21 @@ const BlogView = () => {
         }
         sx={{ mb: { xs: 3, md: 5 } }}
       />
-      <Tabs
-        value={activeTab}
-        onChange={(_, newValue) => setActiveTab(newValue)}
-        sx={{ mb: { xs: 3, md: 5 } }}
-      >
-        {['all', 'published', 'draft'].map((tab) => (
-          <Tab
-            key={tab}
-            iconPosition="end"
-            value={tab}
-            label={tab}
-            icon={
-              <Label
-                variant={((tab === 'all' || tab === 'draft') && 'filled') || 'soft'}
-                color={(tab === 'published' && 'info') || 'default'}
-              >
-                {tab === 'all' && 3}
-
-                {tab === 'published' && 4}
-
-                {tab === 'draft' && 1}
-              </Label>
-            }
-            sx={{ textTransform: 'capitalize' }}
-          />
-        ))}
-      </Tabs>
+      <PostFilterToolbar
+        searchText={searchText}
+        setSearchText={setSearchText}
+        filter={filter}
+        setFilter={setFilter}
+      />
+      {canReset && (
+        <PostFiltersState
+          searchText={searchText}
+          setSearchText={setSearchText}
+          filter={filter}
+          setFilter={setFilter}
+          totalResults={100}
+        />
+      )}
       <PostListHorizontal
         posts={[
           {

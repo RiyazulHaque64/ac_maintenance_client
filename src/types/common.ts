@@ -1,8 +1,3 @@
-export type TQueryParam = {
-  name: string;
-  value: string | number;
-};
-
 export interface IMeta {
   page: number;
   limit: number;
@@ -25,8 +20,4 @@ export interface IErrorResponse {
 
 export type TFilterOption = { value: string | number; label: string };
 
-export type TMeta = {
-  page: number;
-  limit: number;
-  total: number;
-};
+export type TFilterObject = Record<string, string | number | TFilterOption | undefined>;

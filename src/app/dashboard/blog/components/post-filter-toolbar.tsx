@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react';
-import type { TMeta, TFilterOption } from 'src/types/common';
+import type { IMeta, TFilterOption } from 'src/types/common';
 import type { IDatePickerControl } from 'src/components/custom-date-picker/types';
 
 import dayjs from 'dayjs';
@@ -7,8 +7,8 @@ import { useState, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import { Button, Typography } from '@mui/material';
 import InputAdornment from '@mui/material/InputAdornment';
-import { Button, Typography, ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
@@ -20,38 +20,21 @@ import { Iconify } from 'src/components/iconify';
 import CSelect from 'src/components/custom-components/c-select';
 import { CustomDatePicker } from 'src/components/custom-date-picker/custom-date-picker';
 
-// ----------------------------------------------------------------------
-export type TUserFilter = {
-  page: number;
-  limit: TFilterOption;
-  role: TFilterOption;
-  from_date: string | undefined;
-  to_date: string | undefined;
-};
+import type { TPostFilter } from '../lib/types';
 
-export const ROLE_DEFAULT_OPTION: TFilterOption = { value: '', label: 'Role' };
+// ----------------------------------------------------------------------
+
+export const FILTER_BY_DEFAULT_OPTION: TFilterOption = { value: '', label: 'All' };
 
 type Props = {
   searchText: string;
   setSearchText: Dispatch<SetStateAction<string>>;
-  filter: TUserFilter;
-  setFilter: Dispatch<SetStateAction<TUserFilter>>;
-  mode?: 'customer' | 'employee';
-  meta?: TMeta & { by_role: { [key: string]: number } };
-  view: 'grid' | 'list';
-  handleChangeView: (e: React.MouseEvent<HTMLElement>, newView: 'list' | 'grid' | null) => void;
+  filter: TPostFilter;
+  setFilter: Dispatch<SetStateAction<TPostFilter>>;
+  meta?: IMeta & { by_role: { [key: string]: number } };
 };
 
-export function PostFilterToolbar({
-  searchText,
-  setSearchText,
-  filter,
-  setFilter,
-  mode = 'customer',
-  meta,
-  view,
-  handleChangeView,
-}: Props) {
+export function PostFilterToolbar({ searchText, setSearchText, filter, setFilter, meta }: Props) {
   const { from_date, to_date } = filter;
 
   // ------------------------------ State -------------------------------------
@@ -62,10 +45,12 @@ export function PostFilterToolbar({
   const toDate = useBoolean();
 
   // ------------------------------ Options -----------------------------------
-  const ROLE_OPTIONS = [
-    { ...ROLE_DEFAULT_OPTION },
-    { value: 'RETAILER', label: `Retailer (${meta?.by_role?.RETAILER || 0})` },
-    { value: 'USER', label: `Consumer (${meta?.by_role?.USER || 0})` },
+  const FILTER_BY_OPTIONS = [
+    { ...FILTER_BY_DEFAULT_OPTION },
+    { value: 'published', label: `Published (${meta?.by_role?.RETAILER || 0})` },
+    { value: 'draft', label: `Draft (${meta?.by_role?.USER || 0})` },
+    { value: 'featured', label: `Featured (${meta?.by_role?.USER || 0})` },
+    { value: 'unfeatured', label: `Unfeatured (${meta?.by_role?.USER || 0})` },
   ];
 
   // ------------------------------ Handler Functions --------------------------
@@ -225,29 +210,18 @@ export function PostFilterToolbar({
           {renderToDate}
         </Stack>
         <Stack direction="row" spacing={1}>
-          {mode === 'customer' && (
-            <CSelect
-              label="Role"
-              value={filter.role}
-              onSelectValue={(value) => setFilter({ ...filter, role: value })}
-              options={ROLE_OPTIONS}
-            />
-          )}
+          <CSelect
+            label="Role"
+            value={filter.filter_by}
+            onSelectValue={(value) => setFilter({ ...filter, filter_by: value })}
+            options={FILTER_BY_OPTIONS}
+          />
           <CSelect
             label="Show"
             options={LIMIT_OPTIONS}
             value={filter.limit}
             onSelectValue={(value) => setFilter({ ...filter, limit: value })}
           />
-          <ToggleButtonGroup size="small" value={view} exclusive onChange={handleChangeView}>
-            <ToggleButton value="list">
-              <Iconify icon="solar:list-bold" />
-            </ToggleButton>
-
-            <ToggleButton value="grid">
-              <Iconify icon="mingcute:dot-grid-fill" />
-            </ToggleButton>
-          </ToggleButtonGroup>
         </Stack>
       </Stack>
     </Stack>

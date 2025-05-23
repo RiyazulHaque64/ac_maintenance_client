@@ -1,4 +1,5 @@
 import type { z } from 'zod';
+import type { TFilterOption } from 'src/types/common';
 
 import type { NewBlogSchema } from './schema';
 
@@ -24,4 +25,12 @@ export type IPostItem = {
   createdAt: IDateValue;
   favoritePerson: { name: string; avatarUrl: string }[];
   author: { name: string; avatarUrl: string };
+};
+
+export type TPostFilter = {
+  page: number;
+  limit: TFilterOption;
+  filter_by: TFilterOption;
+  from_date: string | undefined;
+  to_date: string | undefined;
 };
