@@ -1,5 +1,7 @@
 'use client';
 
+import type { TError, IGetResponse } from 'src/types/common';
+
 import React, { useState, useEffect, useCallback } from 'react';
 
 import { Button } from '@mui/material';
@@ -7,50 +9,56 @@ import { Button } from '@mui/material';
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
+import { useDebounce } from 'src/hooks/use-debounce';
+
 import { formatQueryString } from 'src/utils/helper';
 
 import api from 'src/api/axios';
 import endpoints from 'src/api/end-points';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { DEFAULT_LIMIT_OPTION } from 'src/constants/common';
+import { DEFAULT_ERROR_STATE, DEFAULT_LIMIT_OPTION } from 'src/constants/common';
 
 import { Iconify } from 'src/components/iconify';
+import { FetchingError } from 'src/components/error/fetching-error';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
+import { PostContainer } from './components/post-container';
 import { PostFiltersState } from './components/post-filter-state';
 import { PostFilterToolbar } from './components/post-filter-toolbar';
-import { PostListHorizontal } from './components/post-list-horinzontal';
+import { formatQueryObj, SORT_BY_DEFAULT_OPTION, FILTER_BY_DEFAULT_OPTION } from './lib/constants';
 
-import type { TPostFilter } from './lib/types';
+import type { IPost, TPostFilter, TPostExtendedMeta } from './lib/types';
 
+// -------------------------------------- Component ------------------------------------
 const BlogView = () => {
+  // ------------------------------------ States ---------------------------------------
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<{
-    success: boolean;
-    message: string;
-    meta: { page: number; limit: number; total: number };
-    data: [];
-  } | null>(null);
+  const [error, setError] = useState<TError>(DEFAULT_ERROR_STATE);
+  const [data, setData] = useState<IGetResponse<IPost, TPostExtendedMeta> | null>(null);
   const [searchText, setSearchText] = useState('');
   const [filter, setFilter] = useState<TPostFilter>({
     page: 1,
     limit: DEFAULT_LIMIT_OPTION,
-    filter_by: { label: 'All', value: '' },
+    filter_by: FILTER_BY_DEFAULT_OPTION,
+    sort_by: SORT_BY_DEFAULT_OPTION,
     from_date: '',
     to_date: '',
   });
 
-  // ------------------------------ Handler Functions ---------------------------
+  // ------------------------------------ Hooks ----------------------------------------
+  const searchTerm = useDebounce(searchText, 500);
+
+  // ------------------------------------ Handler Functions ----------------------------
   const canReset =
     !!searchText || !!filter.filter_by.value || !!filter.from_date || !!filter.to_date;
 
   const fetchPosts = useCallback(async () => {
     try {
       setLoading(true);
-      setError(null);
+      setError(DEFAULT_ERROR_STATE);
 
-      const queryString = formatQueryString(filter);
+      const queryObj = formatQueryObj(filter, searchTerm);
+      const queryString = formatQueryString(queryObj);
 
       const response = await api.get(
         `${endpoints.blog.getAll}${queryString ? `?${queryString}` : ''}`
@@ -59,12 +67,16 @@ const BlogView = () => {
         setData(response.data);
       }
     } catch (err) {
-      setError(err.message || 'Failed to get posts');
+      setError({
+        message: err.message || 'Failed to fetch data',
+        statusCode: err.statusCode || err.status || 500,
+      });
     } finally {
       setLoading(false);
     }
-  }, [filter]);
+  }, [filter, searchTerm]);
 
+  // ------------------------------------ useEffect ------------------------------------
   useEffect(() => {
     fetchPosts();
   }, [fetchPosts]);
@@ -91,6 +103,7 @@ const BlogView = () => {
         setSearchText={setSearchText}
         filter={filter}
         setFilter={setFilter}
+        meta={data?.meta}
       />
       {canReset && (
         <PostFiltersState
@@ -98,44 +111,20 @@ const BlogView = () => {
           setSearchText={setSearchText}
           filter={filter}
           setFilter={setFilter}
-          totalResults={100}
+          totalResults={data?.meta?.total || 0}
+          sx={{ mt: 1 }}
         />
       )}
-      <PostListHorizontal
-        posts={[
-          {
-            id: '1',
-            title: 'This is blog title',
-            tags: ['tag1', 'tag2', 'tag3'],
-            publish: 'published',
-            content: 'This is blog content',
-            coverUrl:
-              'https://images.unsplash.com/photo-1511485977113-f34c92461ad9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-            metaTitle: 'Meta title',
-            totalViews: 234,
-            totalShares: 123,
-            description: 'Description',
-            totalComments: 123,
-            totalFavorites: 123,
-            metaKeywords: ['keyword1', 'keyword2', 'keyword3'],
-            metaDescription: 'Meta description',
-            createdAt: '2022-10-10',
-            favoritePerson: [
-              {
-                name: 'John Doe',
-                avatarUrl:
-                  'https://images.unsplash.com/photo-1499714608240-22fc6ad53fb2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-              },
-            ],
-            author: {
-              name: 'John Doe',
-              avatarUrl:
-                'https://images.unsplash.com/photo-1499714608240-22fc6ad53fb2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-            },
-          },
-        ]}
-        loading={false}
-      />
+      {error?.message?.length > 0 ? (
+        <FetchingError error={error} />
+      ) : (
+        <PostContainer
+          loading={loading}
+          data={data?.data || []}
+          meta={data?.meta}
+          refetch={fetchPosts}
+        />
+      )}
     </DashboardContent>
   );
 };

@@ -63,10 +63,15 @@
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.52.2",
     "react-lazy-load-image-component": "^1.6.3",
+    "react-markdown": "^9.0.1",
+    "rehype-highlight": "^7.0.2",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1",
     "simplebar-react": "^3.2.6",
     "sonner": "^2.0.3",
     "stylis": "^4.3.2",
     "stylis-plugin-rtl": "^2.1.1",
+    "turndown": "^7.2.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -78,6 +83,7 @@
     "@types/react-dom": "^18.3.0",
     "@types/react-lazy-load-image-component": "^1.6.4",
     "@types/stylis": "^4.2.6",
+    "@types/turndown": "^5.0.5",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
     "eslint": "^8.57.0",

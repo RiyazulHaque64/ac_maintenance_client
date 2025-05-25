@@ -39,7 +39,7 @@ export function EmptyContent({
       alignItems="center"
       justifyContent="center"
       sx={{
-        px: 3,
+        p: 3,
         height: 1,
         ...(filled && {
           borderRadius: 2,

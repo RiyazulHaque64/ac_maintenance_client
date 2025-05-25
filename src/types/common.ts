@@ -4,10 +4,10 @@ export interface IMeta {
   total: number;
 }
 
-export interface IGetResponse<T> {
+export interface IGetResponse<T, K = {}> {
   success: boolean;
   message: string;
-  meta: IMeta;
+  meta: IMeta & K;
   data: T[];
 }
 
@@ -17,6 +17,8 @@ export interface IErrorResponse {
   message: string;
   errorSources: { path: string; message: string }[];
 }
+
+export type TError = { message: string; statusCode: number | null };
 
 export type TFilterOption = { value: string | number; label: string };
 

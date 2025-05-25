@@ -7,8 +7,7 @@ import Skeleton from '@mui/material/Skeleton';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-// ----------------------------------------------------------------------
-
+// ------------------------------------ Component ---------------------------------------
 type PostItemSkeletonProps = StackProps & {
   variant?: 'vertical' | 'horizontal';
   amount?: number;

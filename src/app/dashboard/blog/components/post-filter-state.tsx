@@ -9,12 +9,11 @@ import { fDate } from 'src/utils/format-time';
 
 import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-result';
 
-import { FILTER_BY_DEFAULT_OPTION } from './post-filter-toolbar';
+import { FILTER_BY_DEFAULT_OPTION } from '../lib/constants';
 
 import type { TPostFilter } from '../lib/types';
 
-// ----------------------------------------------------------------------
-
+// ------------------------------------ Component ---------------------------------------
 type Props = {
   totalResults: number;
   sx?: SxProps<Theme>;
@@ -32,7 +31,7 @@ export function PostFiltersState({
   filter,
   setFilter,
 }: Props) {
-  // ------------------------------ Handler Funtions -------------------------------
+  // ------------------------------------ Handler Functions ------------------------------
   const handleRemoveSearch = useCallback(() => {
     setSearchText('');
   }, [setSearchText]);

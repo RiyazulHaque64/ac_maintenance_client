@@ -1,5 +1,5 @@
+import type { IMeta } from 'src/types/common';
 import type { Dispatch, SetStateAction } from 'react';
-import type { IMeta, TFilterOption } from 'src/types/common';
 import type { IDatePickerControl } from 'src/components/custom-date-picker/types';
 
 import dayjs from 'dayjs';
@@ -20,46 +20,40 @@ import { Iconify } from 'src/components/iconify';
 import CSelect from 'src/components/custom-components/c-select';
 import { CustomDatePicker } from 'src/components/custom-date-picker/custom-date-picker';
 
-import type { TPostFilter } from '../lib/types';
+import { FilterByOptions, SORT_BY_OPTIONS } from '../lib/constants';
 
-// ----------------------------------------------------------------------
+import type { TPostFilter, TPostExtendedMeta } from '../lib/types';
 
-export const FILTER_BY_DEFAULT_OPTION: TFilterOption = { value: '', label: 'All' };
-
+// ------------------------------------ Component ---------------------------------------
 type Props = {
   searchText: string;
   setSearchText: Dispatch<SetStateAction<string>>;
   filter: TPostFilter;
   setFilter: Dispatch<SetStateAction<TPostFilter>>;
-  meta?: IMeta & { by_role: { [key: string]: number } };
+  meta?: IMeta & TPostExtendedMeta;
 };
 
 export function PostFilterToolbar({ searchText, setSearchText, filter, setFilter, meta }: Props) {
   const { from_date, to_date } = filter;
 
-  // ------------------------------ State -------------------------------------
+  // ------------------------------------ States ---------------------------------------
   const [dateError, setDateError] = useState<string>('');
 
-  // ------------------------------ Hooks -------------------------------------
+  // ------------------------------------ Hooks ----------------------------------------
   const fromDate = useBoolean();
   const toDate = useBoolean();
 
-  // ------------------------------ Options -----------------------------------
-  const FILTER_BY_OPTIONS = [
-    { ...FILTER_BY_DEFAULT_OPTION },
-    { value: 'published', label: `Published (${meta?.by_role?.RETAILER || 0})` },
-    { value: 'draft', label: `Draft (${meta?.by_role?.USER || 0})` },
-    { value: 'featured', label: `Featured (${meta?.by_role?.USER || 0})` },
-    { value: 'unfeatured', label: `Unfeatured (${meta?.by_role?.USER || 0})` },
-  ];
+  // ------------------------------------ Options --------------------------------------
+  const FILTER_BY_OPTIONS = FilterByOptions(meta);
 
-  // ------------------------------ Handler Functions --------------------------
+  // ------------------------------------ Handler Functions ----------------------------
   const handleSearch = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setSearchText(event.target.value);
     },
     [setSearchText]
   );
+
   const handleFromDate = useCallback(
     (newValue: IDatePickerControl) => {
       if (fIsAfter(newValue, new Date())) {
@@ -75,6 +69,7 @@ export function PostFilterToolbar({ searchText, setSearchText, filter, setFilter
     },
     [to_date, filter, setFilter, fromDate]
   );
+
   const handleToDate = useCallback(
     (newValue: IDatePickerControl) => {
       if (from_date && fIsAfter(from_date, newValue)) {
@@ -89,7 +84,7 @@ export function PostFilterToolbar({ searchText, setSearchText, filter, setFilter
     [from_date, filter, setFilter, toDate]
   );
 
-  // ------------------------------ JSX ----------------------------------------
+  // ------------------------------------ JSX ------------------------------------------
   const renderSearchBox = (
     <TextField
       value={searchText}
@@ -149,6 +144,7 @@ export function PostFilterToolbar({ searchText, setSearchText, filter, setFilter
       />
     </>
   );
+
   const renderToDate = (
     <>
       <Button
@@ -215,6 +211,12 @@ export function PostFilterToolbar({ searchText, setSearchText, filter, setFilter
             value={filter.filter_by}
             onSelectValue={(value) => setFilter({ ...filter, filter_by: value })}
             options={FILTER_BY_OPTIONS}
+          />
+          <CSelect
+            label="Sort by"
+            value={filter.sort_by}
+            onSelectValue={(value) => setFilter({ ...filter, sort_by: value })}
+            options={SORT_BY_OPTIONS}
           />
           <CSelect
             label="Show"

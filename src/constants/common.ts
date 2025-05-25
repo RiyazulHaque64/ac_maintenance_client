@@ -10,3 +10,5 @@ export const LIMIT_OPTIONS: TFilterOption[] = [
 ];
 
 export const DEFAULT_LIMIT_OPTION: TFilterOption = { value: 12, label: '12' };
+
+export const DEFAULT_ERROR_STATE = { message: '', statusCode: null };

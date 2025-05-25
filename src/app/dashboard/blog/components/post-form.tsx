@@ -19,12 +19,11 @@ import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
 import { AutoCompleteWithAdding } from 'src/components/hook-form/auto-complete-with-adding';
 
-import { NewBlogSchema } from '../lib/schema';
+import { NewPostSchema, postFormDefaultValues } from '../lib/schema';
 
-import type { TNewBlog } from '../lib/types';
+import type { TNewPost } from '../lib/types';
 
-// ----------------------------------------------------------------------
-
+// ------------------------------------ Component -------------------------------------
 const TAG_OPTIONS = [
   {
     label: 'Tag 1',
@@ -41,39 +40,33 @@ const TAG_OPTIONS = [
 ];
 
 export default function PostForm() {
+  // ------------------------------------ States ---------------------------------------
   const [errorMsg, setErrorMsg] = useState('');
 
+  // ------------------------------------ Hooks ----------------------------------------
   const router = useRouter();
 
-  const defaultValues = {
-    title: '',
-    tags: [],
-    content: '',
-    thumbnail: '',
-    images: [],
-  };
-
-  const methods = useForm<TNewBlog>({
+  // ------------------------------------ React Hook Form ------------------------------
+  const methods = useForm<TNewPost>({
     mode: 'onSubmit',
-    resolver: zodResolver(NewBlogSchema),
-    defaultValues,
+    resolver: zodResolver(NewPostSchema),
+    defaultValues: postFormDefaultValues(),
   });
 
   const {
     handleSubmit,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting },
     reset,
   } = methods;
 
-  console.log(errors);
-
+  // ------------------------------------ Submit Form ----------------------------------
   const onSubmit = handleSubmit(async (data) => {
     try {
       setErrorMsg('');
       const res = await api.post(endpoints.blog.create, data);
       if (res.status === 201) {
         reset();
-        toast.success('Blog created successfully!');
+        toast.success('Post created successfully!');
         router.push(paths.dashboard.blog);
       }
     } catch (err) {
