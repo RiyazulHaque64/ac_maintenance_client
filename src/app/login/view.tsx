@@ -62,9 +62,6 @@ function LoginView() {
       setErrorMsg('');
       const res = await api.post(endpoints.auth.login, data);
       localStorage.setItem('user', JSON.stringify(res.data.data));
-      setTimeout(() => {
-        window.location.replace(callbackUrl);
-      }, 1000);
     } catch (err) {
       setErrorMsg(typeof err === 'string' ? err : err.message);
     }
