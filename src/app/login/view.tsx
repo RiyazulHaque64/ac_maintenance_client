@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -35,10 +36,10 @@ function LoginView() {
 
   // ------------------------------ Hooks -------------------------------
   const password = useBoolean();
-  // const searchParams = useSearchParams();
-  // const router = useRouter();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-  // const callbackUrl = searchParams.get('return_to') || '/dashboard';
+  const callbackUrl = searchParams.get('return_to') || '/dashboard';
 
   // ------------------------------ React Hook Form ---------------------
   const defaultValues = {
@@ -62,7 +63,7 @@ function LoginView() {
       setErrorMsg('');
       const res = await api.post(endpoints.auth.login, data);
       localStorage.setItem('user', JSON.stringify(res.data.data));
-      // router.push(callbackUrl);
+      router.push(callbackUrl);
     } catch (err) {
       setErrorMsg(typeof err === 'string' ? err : err.message);
     }
