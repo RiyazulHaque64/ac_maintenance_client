@@ -23,7 +23,10 @@ export function SignOutButton({ onClose, ...other }: Props) {
     try {
       await api.post('/auth/logout');
       localStorage.removeItem('user');
-      router.refresh();
+      const returnTo = window.location.pathname;
+
+      // Redirect to login page with return_to query param
+      router.replace(`/login?return_to=${encodeURIComponent(returnTo)}`);
     } catch (error) {
       console.error(error);
     }
