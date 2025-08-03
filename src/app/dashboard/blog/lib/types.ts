@@ -7,51 +7,31 @@ export type TNewPost = z.infer<typeof NewPostSchema>;
 
 export type IDateValue = string | number | null;
 
-export type IPostItem = {
-  id: string;
-  title: string;
-  tags: string[];
-  publish: string;
-  content: string;
-  coverUrl: string;
-  metaTitle: string;
-  totalViews: number;
-  totalShares: number;
-  description: string;
-  totalComments: number;
-  totalFavorites: number;
-  metaKeywords: string[];
-  metaDescription: string;
-  createdAt: IDateValue;
-  favoritePerson: { name: string; avatarUrl: string }[];
-  author: { name: string; avatarUrl: string };
-};
-
-export type TAuthor = {
+export type TPostAuthor = {
   id: string;
   name: string;
-  contact_number: string;
   email: string;
-  profile_pic?: string;
-  role: string;
-  status: string;
-  created_at: string;
-  updated_at: string;
+  contact_number: string;
+  profile_pic: string;
 };
+
 export interface IPost {
   id: string;
-  slug: string;
   title: string;
+  slug: string;
   content: string;
-  tags: string[];
   thumbnail: string;
   images: string[];
   published: boolean;
   featured: boolean;
-  author_id: string;
-  author: TAuthor;
   created_at: string;
   updated_at: string;
+  author_id: string;
+  author: TPostAuthor;
+  tags: {
+    id: string;
+    name: string;
+  }[];
 }
 
 export type TPostFilter = {

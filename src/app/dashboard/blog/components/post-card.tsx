@@ -112,7 +112,7 @@ export function PostCard({ post, sx, refetch, ...other }: Props) {
           <Stack spacing={1} flexGrow={1}>
             <Link
               component={RouterLink}
-              href=""
+              href={`/dashboard/blog/${slug}`}
               color="inherit"
               variant="subtitle2"
               sx={{ ...maxLine({ line: 2 }) }}
@@ -195,7 +195,7 @@ export function PostCard({ post, sx, refetch, ...other }: Props) {
           <MenuItem
             onClick={() => {
               popover.onClose();
-              router.push('');
+              router.push(`/dashboard/blog/${slug}`);
             }}
           >
             <Iconify icon="solar:eye-bold" />
@@ -224,6 +224,7 @@ export function PostCard({ post, sx, refetch, ...other }: Props) {
           </MenuItem>
         </MenuList>
       </CustomPopover>
+
       <ConfirmDialog
         open={deleteConfirmation.value}
         onClose={deleteConfirmation.onFalse}
