@@ -1,3 +1,5 @@
+'use client';
+
 import type { TError } from 'src/types/common';
 
 import { m } from 'framer-motion';
