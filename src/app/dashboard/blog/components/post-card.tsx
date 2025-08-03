@@ -8,11 +8,12 @@ import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
+import { LoadingButton } from '@mui/lab';
 import Avatar from '@mui/material/Avatar';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
-import { Switch, Button, FormControlLabel } from '@mui/material';
+import { Switch, Button, Typography, FormControlLabel } from '@mui/material';
 
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
@@ -46,10 +47,12 @@ export function PostCard({ post, sx, refetch, ...other }: Props) {
   const { id, title, content, thumbnail, published, created_at, author, featured } = post;
 
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const popover = usePopover();
   const router = useRouter();
   const deleteConfirmation = useBoolean();
+  const publishedPopover = usePopover();
 
   const handleDelete = useCallback(
     async (ids: string[]) => {
@@ -69,13 +72,39 @@ export function PostCard({ post, sx, refetch, ...other }: Props) {
     [refetch]
   );
 
+  const handleUpdate = useCallback(
+    async (postId: string, data: Record<string, any>) => {
+      try {
+        setIsUpdating(true);
+        const response = await api.patch(endpoints.blog.update(postId), data);
+        if (response.status === 200) {
+          toast.success('Success!');
+          refetch();
+        }
+      } catch (err) {
+        toast.error(err.message || 'Failed to update post');
+      } finally {
+        setIsUpdating(false);
+      }
+    },
+    [refetch]
+  );
+
   return (
     <>
       <Card sx={{ display: 'flex', ...sx }} {...other}>
         <Stack spacing={1} flexGrow={1} sx={{ p: (theme) => theme.spacing(3, 3, 2, 3) }}>
           <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
-            <FormControlLabel control={<Switch checked={published} />} label="Published" />
-            <IconButton color="primary" title="Featured">
+            <FormControlLabel
+              control={<Switch checked={published} />}
+              onClick={publishedPopover.onOpen}
+              label="Published"
+            />
+            <IconButton
+              color="primary"
+              title="Featured"
+              onClick={() => handleUpdate(id, { featured: !featured })}
+            >
               <Iconify icon={featured ? 'tabler:star-filled' : 'hugeicons:star'} />
             </IconButton>
           </Box>
@@ -176,7 +205,7 @@ export function PostCard({ post, sx, refetch, ...other }: Props) {
           <MenuItem
             onClick={() => {
               popover.onClose();
-              router.push('');
+              router.push(`/dashboard/blog/edit/${id}`);
             }}
           >
             <Iconify icon="solar:pen-bold" />
@@ -214,6 +243,41 @@ export function PostCard({ post, sx, refetch, ...other }: Props) {
           </Button>
         }
       />
+
+      <CustomPopover
+        open={publishedPopover.open}
+        onClose={publishedPopover.onClose}
+        anchorEl={publishedPopover.anchorEl}
+        slotProps={{ arrow: { placement: 'bottom-right' } }}
+      >
+        <Box sx={{ p: 2, maxWidth: 280 }}>
+          <Typography variant="subtitle1">{published ? 'Unpublish' : 'Publish'}</Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary', mt: '4px' }}>
+            Are you sure want to {published ? 'unnpublish' : 'publish'} this product?
+          </Typography>
+          <Stack direction="row" justifyContent="flex-end" gap={1} sx={{ mt: 2 }}>
+            <Button
+              variant="outlined"
+              size="small"
+              color="primary"
+              onClick={publishedPopover.onClose}
+              disabled={isUpdating}
+            >
+              Cancel
+            </Button>
+            <LoadingButton
+              variant="contained"
+              size="small"
+              color="primary"
+              onClick={() => handleUpdate(id, { published: !published })}
+              disabled={isUpdating}
+              loading={isUpdating}
+            >
+              Confirm
+            </LoadingButton>
+          </Stack>
+        </Box>
+      </CustomPopover>
     </>
   );
 }

@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import useSWR from 'swr';
 import { useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useParams, useRouter } from 'next/navigation';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -14,6 +15,7 @@ import { paths } from 'src/routes/paths';
 
 import api from 'src/api/axios';
 import endpoints from 'src/api/end-points';
+import { getTags } from 'src/services/utility';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field } from 'src/components/hook-form';
@@ -23,28 +25,18 @@ import { NewPostSchema, postFormDefaultValues } from '../lib/schema';
 
 import type { TNewPost } from '../lib/types';
 
-// ------------------------------------ Component -------------------------------------
-const TAG_OPTIONS = [
-  {
-    label: 'Tag 1',
-    value: 'tag 1',
-  },
-  {
-    label: 'Tag 2',
-    value: 'tag 2',
-  },
-  {
-    label: 'Tag 3',
-    value: 'tag 3',
-  },
-];
-
+// ------------------------------------ Component --------------------------------------
 export default function PostForm() {
   // ------------------------------------ States ---------------------------------------
   const [errorMsg, setErrorMsg] = useState('');
+  const [tagOptions, setTagOptions] = useState([]);
 
   // ------------------------------------ Hooks ----------------------------------------
+  const { id }: { id: string } = useParams();
   const router = useRouter();
+
+  // ------------------------------------ Fetcher --------------------------------------
+  const { data: tags } = useSWR('tags', getTags);
 
   // ------------------------------------ React Hook Form ------------------------------
   const methods = useForm<TNewPost>({
@@ -63,16 +55,49 @@ export default function PostForm() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       setErrorMsg('');
-      const res = await api.post(endpoints.blog.create, data);
+      const res = id
+        ? await api.patch(endpoints.blog.update(id), data)
+        : await api.post(endpoints.blog.create, data);
       if (res.status === 201) {
         reset();
         toast.success('Post created successfully!');
+        router.push(paths.dashboard.blog);
+      }
+      if (res.status === 200) {
+        reset();
+        toast.success('Post updated successfully!');
         router.push(paths.dashboard.blog);
       }
     } catch (err) {
       setErrorMsg(typeof err === 'string' ? err : err.message);
     }
   });
+
+  // ------------------------------------ useEffect ------------------------------------
+  useEffect(() => {
+    if (id) {
+      const fetchPost = async (blogId: string) => {
+        try {
+          const res = await api.get(endpoints.blog.getSingle(blogId));
+          if (res.status === 200) {
+            const {
+              data: { data },
+            } = res;
+            reset({ ...data, tags: data.tags.map((tag: any) => tag.id) });
+          }
+        } catch (err) {
+          setErrorMsg(typeof err === 'string' ? err : err.message);
+        }
+      };
+      fetchPost(id);
+    }
+  }, [id, reset]);
+
+  useEffect(() => {
+    if (tags) {
+      setTagOptions(tags.data.map((tag: any) => ({ label: tag.name, value: tag.id })));
+    }
+  }, [tags]);
 
   return (
     <Stack direction="column" alignItems="center">
@@ -99,7 +124,7 @@ export default function PostForm() {
                 name="tags"
                 label="Select tags"
                 placeholder="tags"
-                options={TAG_OPTIONS}
+                options={tagOptions}
               />
               <Field.Editor
                 name="content"
@@ -125,7 +150,7 @@ export default function PostForm() {
             </Stack>
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                Post
+                {id ? 'Save changes' : 'Post'}
               </LoadingButton>
             </Stack>
           </Stack>
