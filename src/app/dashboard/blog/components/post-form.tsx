@@ -32,7 +32,7 @@ export default function PostForm() {
   const [tagOptions, setTagOptions] = useState([]);
 
   // ------------------------------------ Hooks ----------------------------------------
-  const { id }: { id: string } = useParams();
+  const { slug }: { slug: string } = useParams();
   const router = useRouter();
 
   // ------------------------------------ Fetcher --------------------------------------
@@ -55,8 +55,8 @@ export default function PostForm() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       setErrorMsg('');
-      const res = id
-        ? await api.patch(endpoints.blog.update(id), data)
+      const res = slug
+        ? await api.patch(endpoints.blog.update(slug), data)
         : await api.post(endpoints.blog.create, data);
       if (res.status === 201) {
         reset();
@@ -75,10 +75,10 @@ export default function PostForm() {
 
   // ------------------------------------ useEffect ------------------------------------
   useEffect(() => {
-    if (id) {
-      const fetchPost = async (blogId: string) => {
+    if (slug) {
+      const fetchPost = async (blogSlug: string) => {
         try {
-          const res = await api.get(endpoints.blog.getSingle(blogId));
+          const res = await api.get(endpoints.blog.getSingle(blogSlug));
           if (res.status === 200) {
             const {
               data: { data },
@@ -89,9 +89,9 @@ export default function PostForm() {
           setErrorMsg(typeof err === 'string' ? err : err.message);
         }
       };
-      fetchPost(id);
+      fetchPost(slug);
     }
-  }, [id, reset]);
+  }, [slug, reset]);
 
   useEffect(() => {
     if (tags) {
@@ -150,7 +150,7 @@ export default function PostForm() {
             </Stack>
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {id ? 'Save changes' : 'Post'}
+                {slug ? 'Save changes' : 'Post'}
               </LoadingButton>
             </Stack>
           </Stack>

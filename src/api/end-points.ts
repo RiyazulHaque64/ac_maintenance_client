@@ -5,8 +5,8 @@ const endpoints = {
   blog: {
     create: '/blog/post',
     getAll: '/blog/posts',
-    getSingle: (id: string) => `/blog/post/${id}`,
-    update: (id: string) => `/blog/post/${id}`,
+    getSingle: (slug: string) => `/blog/post/${slug}`,
+    update: (slug: string) => `/blog/post/${slug}`,
     delete: '/blog/delete-posts',
   },
 };

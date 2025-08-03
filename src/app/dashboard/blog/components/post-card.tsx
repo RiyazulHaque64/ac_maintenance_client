@@ -44,7 +44,7 @@ type Props = CardProps & {
 };
 
 export function PostCard({ post, sx, refetch, ...other }: Props) {
-  const { id, title, content, thumbnail, published, created_at, author, featured } = post;
+  const { id, title, content, thumbnail, published, created_at, author, featured, slug } = post;
 
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -205,7 +205,7 @@ export function PostCard({ post, sx, refetch, ...other }: Props) {
           <MenuItem
             onClick={() => {
               popover.onClose();
-              router.push(`/dashboard/blog/edit/${id}`);
+              router.push(`/dashboard/blog/edit/${slug}`);
             }}
           >
             <Iconify icon="solar:pen-bold" />
